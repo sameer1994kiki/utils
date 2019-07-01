@@ -1,0 +1,134 @@
+ //获取对象类型
+        getObjectType (value) {
+            return Object.prototype.toString.call(value)
+        },
+    
+        //是否字符串
+        isString(value) {
+            return typeof value == 'string' || (typeof value == 'object' && value != null && !Array.isArray(value) && this.getObjectType(value) == '[object String]')
+        },
+    
+        //是否数字
+        isNumber (value) { 
+            return !isNaN(parseFloat(value)) && isFinite(value);
+        },
+    
+        //是否boolean
+        isBoolean (value) {
+            return value === true || value === false || this.getObjectType(value) === '[object Boolean]'
+        },
+    
+        //是否为null
+        isNull (value) { 
+            return value === null
+        },
+    
+        //是否undefined
+        isUndefined (value) { 
+            return value === undefined
+        },
+    
+        //是否对象
+        isObject (value) {
+            return typeof value != null && (typeof value == 'object' || typeof value == 'function')
+        },
+    
+        //是否函数
+        isFunction (value) { 
+            if (!this.isObject(value)) {
+                return false
+            }
+            let tag = this.getObjectType(value)
+            return tag == '[object Function]' || tag == '[object AsyncFunction]' || tag == '[object GeneratorFunction]' || tag == '[object Proxy]'
+        },
+    
+        //是否数组
+        isArray (value) { 
+            return (typeof Array.isArray === 'function' && Array.isArray(value)) || this.getObjectType(value) === '[object Array]'
+        },
+    
+        //是否时间
+        isDate (value) {
+            return this.getObjectType(value) === '[object Date]'
+        },
+    
+        //是否正则
+        isRegExp (value) {
+            return this.getObjectType(value) === '[object RegExp]'
+        },
+    
+        //是否错误对象
+        isError(value) {
+            let tag = this.getObjectType(value)
+            return tag == '[object Error]' || tag == '[object DOMException]' || value instanceof Error
+        },
+    
+        //是否为空
+        isEmpty (value) {
+            return value == null
+        },
+    
+        //是否为空对象
+        isEmptyObject (value) {
+            if (this.isBoolean(value) || this.isNumber(value) || this.isDate(value)) return false
+            for (let key in value) {
+                if (value.hasOwnProperty(key)) {
+                    return false
+                }
+            }
+            return true
+        },
+    
+        //是否为简单对象,常用于判断是否为JSON
+        isPlainObject (value) {
+            if (this.isNull(value) || this.isUndefined(value)) return false
+            return this.isObject(value) && value.__proto__ === Object.prototype
+        },
+        
+        //是否false
+        isFalse (value) {
+            if (value == '' || value == undefined || value == null || value == 'null' || value == 'undefined' || value == 0 || value == false || value == NaN) return true
+            return false
+        },
+    
+        //是否true
+        isTrue (value) {
+            return !this.isFalse(value)
+        },
+    
+    }
+
+    /**
+     * 设置cookie
+     *
+     * @param {string} key 键
+     * @param {string} val 值
+     * @param {string} time 有效期/天
+    **/
+    function setCookie(key, val, time) {
+        time = time || 0;
+        let date = new Date();
+        date.setTime(date.getTime() + time);
+        _doc.cookie = key + '=' + escape(val) + ';path=/;expires=' + date.toGMTString();
+    }
+
+    /**
+     * 获取cookie
+     *
+     * @param {string} key 键
+     * @return {string} 返回cookie值
+    **/
+    function getCookie(key) {
+        let arr = document.cookie.match(new RegExp('(^| )' + key + '=([^;]*)(;|$)'));
+        return null != arr ? unescape(arr[2]) : null;
+    }
+
+    /**
+     * 删除cookie
+     *
+     * @param {string} key 键
+     * @return {string} 删除cookie值
+    **/
+    function removeCookie(key) {
+        setCookie(key, '1', -1)
+    }
